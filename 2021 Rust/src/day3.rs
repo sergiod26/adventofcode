@@ -18,6 +18,16 @@ pub fn part1(input: &str) -> isize {
         epsilon.push_str(if x <= rows / 2 { "1" } else { "0" });
     });
 
+    //maybe?!
+    // let (gamma, epsilon) = vals
+    //     .iter()
+    //     .fold((String::from(""), String::from("")), |(g, e), &x| {
+    //         (
+    //             format!("{}{}", g, (if x > rows / 2 { "1" } else { "0" })),
+    //             format!("{}{}", e, (if x <= rows / 2 { "1" } else { "0" })),
+    //         )
+    //     });
+
     isize::from_str_radix(&gamma, 2).unwrap() * isize::from_str_radix(&epsilon, 2).unwrap()
 }
 
