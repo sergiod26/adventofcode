@@ -5,7 +5,7 @@ pub fn input_generator(input: &str) -> Vec<Line> {
     input
         .lines()
         .map(|l| {
-            let sp: Vec<&str> = l.split(" ").collect();
+            let sp: Vec<&str> = l.split(' ').collect();
             Line(sp[0].to_string(), sp[1].parse::<i32>().unwrap())
         })
         .collect()

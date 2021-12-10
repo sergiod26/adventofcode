@@ -1,6 +1,6 @@
 #[aoc_generator(day6)]
 pub fn input_generator(input: &str) -> Vec<u64> {
-    let numbers = input.split(",").map(|c| c.parse::<usize>().unwrap());
+    let numbers = input.split(',').map(|c| c.parse::<usize>().unwrap());
     let mut data = vec![0; 9];
     numbers.for_each(|n| data[n] += 1);
     data

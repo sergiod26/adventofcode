@@ -11,10 +11,10 @@ pub fn part1(input: &str) -> i32 {
     let mut boards: Vec<Vec<Vec<&str>>> = vec![];
     let mut boards_checks: Vec<Vec<Vec<bool>>> = vec![];
     data.next();
-    while let Some(_) = data.peek() {
+    while data.peek().is_some() {
         let mut board: Vec<Vec<&str>> = vec![];
         let mut board_check: Vec<Vec<bool>> = vec![];
-        while let Some(line) = data.next() {
+        for line in &mut data {
             if line.is_empty() {
                 break;
             }
@@ -45,7 +45,7 @@ pub fn part1(input: &str) -> i32 {
                             let mut result = 0;
                             for i in 0..rows {
                                 for j in 0..cols {
-                                    if boards_checks[b][i][j] == false {
+                                    if !boards_checks[b][i][j] {
                                         result += boards[b][i][j].parse::<i32>().unwrap();
                                     }
                                 }
@@ -68,10 +68,10 @@ pub fn part2(input: &str) -> i32 {
     let mut boards: Vec<Vec<Vec<&str>>> = vec![];
     let mut boards_checks: Vec<Vec<Vec<bool>>> = vec![];
     data.next();
-    while let Some(_) = data.peek() {
+    while data.peek().is_some() {
         let mut board: Vec<Vec<&str>> = vec![];
         let mut board_check: Vec<Vec<bool>> = vec![];
-        while let Some(line) = data.next() {
+        for line in &mut data {
             if line.is_empty() {
                 break;
             }
@@ -94,7 +94,7 @@ pub fn part2(input: &str) -> i32 {
 
     for n in numbers {
         'outer: for b in 0..boards_count {
-            if boards_won[b] == false {
+            if !boards_won[b] {
                 for r in 0..rows {
                     for c in 0..cols {
                         if boards[b][r][c] == n {
@@ -102,25 +102,23 @@ pub fn part2(input: &str) -> i32 {
                             boards_sums[b][r].row += 1;
                             boards_sums[b][c].col += 1;
 
-                            if boards_sums[b][r].row == rows || boards_sums[b][c].col == cols {
-                                if boards_won[b] == false {
-                                    boards_won[b] = true;
-                                    boards_won_counter += 1;
-                                    if boards_won_counter == boards_count {
-                                        let mut result = 0;
-                                        for i in 0..rows {
-                                            for j in 0..cols {
-                                                if boards_checks[b][i][j] == false {
-                                                    result +=
-                                                        boards[b][i][j].parse::<i32>().unwrap();
-                                                }
+                            if (boards_sums[b][r].row == rows || boards_sums[b][c].col == cols) && !boards_won[b] {
+                                boards_won[b] = true;
+                                boards_won_counter += 1;
+                                if boards_won_counter == boards_count {
+                                    let mut result = 0;
+                                    for i in 0..rows {
+                                        for j in 0..cols {
+                                            if !boards_checks[b][i][j] {
+                                                result +=
+                                                    boards[b][i][j].parse::<i32>().unwrap();
                                             }
                                         }
-
-                                        return result * n.parse::<i32>().unwrap();
                                     }
-                                    continue 'outer;
+
+                                    return result * n.parse::<i32>().unwrap();
                                 }
+                                continue 'outer;
                             }
                         }
                     }

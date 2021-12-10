@@ -63,7 +63,7 @@ pub fn part2(input: &str) -> isize {
         }
     }
 
-    isize::from_str_radix(&oxygen[0], 2).unwrap() * isize::from_str_radix(&co2[0], 2).unwrap()
+    isize::from_str_radix(oxygen[0], 2).unwrap() * isize::from_str_radix(co2[0], 2).unwrap()
 }
 
 fn freq(data: Vec<&str>, cols: usize) -> Vec<&str> {
@@ -76,7 +76,7 @@ fn freq(data: Vec<&str>, cols: usize) -> Vec<&str> {
     });
 
     let rows = data.len() as f32;
-    vals.clone()
+    vals
         .iter()
         .map(|&x| {
             if (x as f32) > rows / 2.0 {

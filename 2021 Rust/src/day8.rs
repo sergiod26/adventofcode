@@ -9,7 +9,7 @@ pub fn part1(input: &str) -> usize {
                 .into_iter()
                 .nth(1)
                 .unwrap()
-                .split(" ")
+                .split(' ')
                 .collect::<Vec<&str>>()
         })
         .collect();
@@ -22,8 +22,7 @@ pub fn part1(input: &str) -> usize {
     sizes
         .iter()
         .filter(|&x| x == &2 || x == &3 || x == &4 || x == &7)
-        .collect::<Vec<&usize>>()
-        .len()
+        .count()
 }
 
 #[aoc(day8, part2)]
@@ -32,74 +31,68 @@ pub fn part2(input: &str) -> usize {
     for line in input.trim().lines() {
         let split: Vec<&str> = line.split(" | ").collect();
         let input: Vec<Vec<char>> = split[0]
-            .split(" ")
+            .split(' ')
             .map(|x| {
                 let mut ch: Vec<char> = x.chars().collect();
-                ch.sort();
+                ch.sort_unstable();
                 ch
             })
             .collect();
 
         let output: Vec<Vec<char>> = split[1]
-            .split(" ")
+            .split(' ')
             .map(|x| {
                 let mut ch: Vec<char> = x.chars().collect();
-                ch.sort();
+                ch.sort_unstable();
                 ch
             })
             .collect();
 
-        let one = input.iter().filter(|x| x.iter().len() == 2).nth(0).unwrap();
-        let seven = input.iter().filter(|x| x.iter().len() == 3).nth(0).unwrap();
-        let four = input.iter().filter(|x| x.iter().len() == 4).nth(0).unwrap();
-        let eight = input.iter().filter(|x| x.iter().len() == 7).nth(0).unwrap();
+        let one = input.iter().find(|x| x.iter().len() == 2).unwrap();
+        let seven = input.iter().find(|x| x.iter().len() == 3).unwrap();
+        let four = input.iter().find(|x| x.iter().len() == 4).unwrap();
+        let eight = input.iter().find(|x| x.iter().len() == 7).unwrap();
 
         let nine = input
             .iter()
-            .filter(|&x| {
+            .find(|&x| {
                 x.iter().len() == 6 && diff(diff(x.clone(), seven.clone()), four.clone()).len() == 1
             })
-            .nth(0)
             .unwrap();
 
         let zero = input
             .iter()
-            .filter(|&x| {
+            .find(|&x| {
                 x.iter().len() == 6
                     && !eq(x.clone(), nine.clone())
                     && diff(x.clone(), one.clone()).len() == 4
             })
-            .nth(0)
             .unwrap();
 
         let six = input
             .iter()
-            .filter(|&x| x.iter().len() == 6 && diff(x.clone(), one.clone()).len() == 5)
-            .nth(0)
+            .find(|&x| x.iter().len() == 6 && diff(x.clone(), one.clone()).len() == 5)
             .unwrap();
 
         let two = input
             .iter()
-            .filter(|&x| {
+            .find(|&x| {
                 x.iter().len() == 5 && diff(diff(x.clone(), seven.clone()), four.clone()).len() == 2
             })
-            .nth(0)
             .unwrap();
 
         let three = input
             .iter()
-            .filter(|&x| x.iter().len() == 5 && diff(x.clone(), seven.clone()).len() == 2)
-            .nth(0)
+            .find(|&x| x.iter().len() == 5 && diff(x.clone(), seven.clone()).len() == 2)
             .unwrap();
 
         let five = input
             .iter()
-            .filter(|&x| {
+            .find(|&x| {
                 x.iter().len() == 5
                     && !eq(x.clone(), three.clone())
                     && diff(diff(x.clone(), seven.clone()), four.clone()).len() == 1
             })
-            .nth(0)
             .unwrap();
 
         // println!("0 {:?}", zero);
@@ -121,9 +114,8 @@ pub fn part2(input: &str) -> usize {
             let r = values
                 .iter()
                 .enumerate()
-                .filter(|(_, &v)| eq(o.clone(), v.clone()))
-                .nth(0)
-                .expect(&format!("MISS {:?}\n\n{:?}", o, values));
+                .find(|(_, &v)| eq(o.clone(), v.clone()))
+                .unwrap_or_else(|| panic!("MISS {:?}\n\n{:?}", o, values));
             answer += r.0;
         }
         final_answer += answer;

@@ -54,30 +54,26 @@ pub fn part2(input: &[Coord]) -> usize {
         } else if pair[0].y == pair[1].y {
             let range = get_range(pair[0].x, pair[1].x);
             range.for_each(|i| *data.entry(Coord { x: i, y: pair[0].y }).or_insert(0) += 1);
-        } else {
-            if pair[0].x < pair[1].x {
-                if pair[0].y < pair[1].y {
-                    (pair[0].x..=pair[1].x)
-                        .zip(pair[0].y..=pair[1].y)
-                        .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
-                } else {
-                    (pair[0].x..=pair[1].x)
-                        .zip((pair[1].y..=pair[0].y).rev())
-                        .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
-                }
+        } else if pair[0].x < pair[1].x {
+            if pair[0].y < pair[1].y {
+                (pair[0].x..=pair[1].x)
+                    .zip(pair[0].y..=pair[1].y)
+                    .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
             } else {
-                if pair[0].y < pair[1].y {
-                    (pair[1].x..=pair[0].x)
-                        .rev()
-                        .zip(pair[0].y..=pair[1].y)
-                        .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
-                } else {
-                    (pair[1].x..=pair[0].x)
-                        .rev()
-                        .zip((pair[1].y..=pair[0].y).rev())
-                        .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
-                }
+                (pair[0].x..=pair[1].x)
+                    .zip((pair[1].y..=pair[0].y).rev())
+                    .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
             }
+        } else if pair[0].y < pair[1].y {
+            (pair[1].x..=pair[0].x)
+                .rev()
+                .zip(pair[0].y..=pair[1].y)
+                .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
+        } else {
+            (pair[1].x..=pair[0].x)
+                .rev()
+                .zip((pair[1].y..=pair[0].y).rev())
+                .for_each(|(x, y)| *data.entry(Coord { x, y }).or_insert(0) += 1);
         }
     }
 

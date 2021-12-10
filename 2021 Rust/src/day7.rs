@@ -3,7 +3,7 @@
 #[aoc_generator(day7)]
 pub fn input_generator(input: &str) -> Vec<i32> {
     input
-        .split(",")
+        .split(',')
         .map(|c| c.parse::<i32>().unwrap())
         .collect()
 }

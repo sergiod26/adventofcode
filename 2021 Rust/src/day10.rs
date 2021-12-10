@@ -22,11 +22,11 @@ pub fn part2(input: &[Vec<char>]) -> u64 {
         }
     }
 
-    result.sort();
+    result.sort_unstable();
     result[result.len() / 2]
 }
 
-fn calculate_illegal(line: &Vec<char>) -> i32 {
+fn calculate_illegal(line: &[char]) -> i32 {
     let mut track = vec![];
     for &c in line {
         if is_open(c) {
@@ -42,7 +42,7 @@ fn calculate_illegal(line: &Vec<char>) -> i32 {
     0
 }
 
-fn calculate_autocomplete(line: &Vec<char>) -> u64 {
+fn calculate_autocomplete(line: &[char]) -> u64 {
     let mut track = vec![];
     for &c in line {
         if is_open(c) {
