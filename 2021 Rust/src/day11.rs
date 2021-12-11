@@ -9,42 +9,32 @@ pub fn input_generator(input: &str) -> Vec<Vec<u32>> {
 #[aoc(day11, part1)]
 pub fn part1(input: &[Vec<u32>]) -> u32 {
     let mut data = input.to_owned();
-    let mut result = 0;
-    for _i in 0..100 {
-        result += step(&mut data);
-    }
-    result
+    (0..100).fold(0, |acc, _| acc + step(&mut data))
 }
 
 #[aoc(day11, part2)]
 pub fn part2(input: &[Vec<u32>]) -> u32 {
     let mut data = input.to_owned();
-    for i in 1.. {
-        if step(&mut data) == 100 {
-            return i;
-        }
-    }
-    0
+    (1..).find(|_| step(&mut data) == 100).unwrap()
 }
 
 pub fn step(data: &mut [Vec<u32>]) -> u32 {
     let len = data.len();
-    let mut flashes = vec![vec![false; len]; len];
     let mut flash_count = 0;
 
     for i in 0..len {
         for j in 0..len {
             data[i][j] += 1;
-            if data[i][j] > 9 && !flashes[i][j] {
-                flashes[i][j] = true;
-                flash_count += 1 + flash(data, &mut flashes, i as isize, j as isize, len as isize);
+            if data[i][j] == 10 {
+                flash_count += 1 + flash(data, i as isize, j as isize, len as isize);
             }
         }
     }
-    for i in 0..len {
-        for j in 0..len {
-            if data[i][j] > 9 {
-                data[i][j] = 0;
+
+    for row in data {
+        for cell in row {
+            if *cell > 9 {
+                *cell = 0;
             }
         }
     }
@@ -52,7 +42,7 @@ pub fn step(data: &mut [Vec<u32>]) -> u32 {
     flash_count
 }
 
-fn flash(data: &mut [Vec<u32>], flashes: &mut [Vec<bool>], i: isize, j: isize, len: isize) -> u32 {
+fn flash(data: &mut [Vec<u32>], i: isize, j: isize, len: isize) -> u32 {
     let mut flash_count = 0;
     for i_it in -1..=1 {
         for j_it in -1..=1 {
@@ -65,9 +55,8 @@ fn flash(data: &mut [Vec<u32>], flashes: &mut [Vec<bool>], i: isize, j: isize, l
                 let new_j = (j + j_it) as usize;
 
                 data[new_i][new_j] += 1;
-                if data[new_i][new_j] > 9 && !flashes[new_i][new_j] {
-                    flashes[new_i][new_j] = true;
-                    flash_count += 1 + flash(data, flashes, new_i as isize, new_j as isize, len);
+                if data[new_i][new_j] == 10 {
+                    flash_count += 1 + flash(data, new_i as isize, new_j as isize, len);
                 }
             }
         }
@@ -94,5 +83,11 @@ mod tests {
     pub fn part1_test() {
         let result = part1(&input_generator(INPUT));
         assert_eq!(result, 1656);
+    }
+
+    #[test]
+    pub fn part2_test() {
+        let result = part2(&input_generator(INPUT));
+        assert_eq!(result, 195);
     }
 }
