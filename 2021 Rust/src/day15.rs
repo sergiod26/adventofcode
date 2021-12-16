@@ -11,14 +11,14 @@ impl Pos {
         if x + 1 < matrix.len() {
             vec.push((Pos(x + 1, y), matrix[x + 1][y]));
         }
-        if x as isize - 1 >= 0 {
+        if x as isize > 0 {
             vec.push((Pos(x - 1, y), matrix[x - 1][y]));
         }
 
         if y + 1 < matrix.len() {
             vec.push((Pos(x, y + 1), matrix[x][y + 1]));
         }
-        if y as isize - 1 >= 0 {
+        if y as isize > 0 {
             vec.push((Pos(x, y - 1), matrix[x][y - 1]));
         }
 
@@ -65,9 +65,9 @@ pub fn part2(input: &[Vec<usize>]) -> usize {
     }
 
     for m in 1..5 {
-        for i in 0..len * 5 {
+        for row in vec.iter_mut() {
             for j in 0..len {
-                vec[i][(len * m) + j] = ((vec[i][(len * (m - 1)) + j]) % 9) + 1;
+                row[(len * m) + j] = ((row[(len * (m - 1)) + j]) % 9) + 1;
             }
         }
     }

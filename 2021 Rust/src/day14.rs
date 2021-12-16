@@ -64,7 +64,7 @@ pub fn steps(input: &Data, count: usize) -> usize {
         tmp.for_each(|(k, v)| {
             let add = dict.get(&k).unwrap().clone();
             *template.entry(add.0.clone()).or_insert(0) += v;
-            *template.entry(add.1.clone()).or_insert(0) += v;
+            *template.entry(add.1).or_insert(0) += v;
 
             //Inserting the char in the middle, will "destroy" the original pair
             *template.entry(k).or_insert(v) -= v;
