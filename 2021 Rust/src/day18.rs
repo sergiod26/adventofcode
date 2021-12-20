@@ -38,66 +38,50 @@ fn reduce(number: Number, depth: usize) -> (Number, i32, i32) {
     match number.clone() {
         Regular(num) => (Regular(num), 0, 0),
         Pair(a, b) => {
-            if depth + 1 == 4 {
-                println!("reduce {:?} depth: {:?}", &number, depth);
-                match (*a, *b) {
-                    (Regular(aa), Regular(bb)) => (Regular(0), aa, bb),
-                    (Regular(aa), Pair(ba, bb)) => {
-                        let pair = foo(Pair(ba, bb));
-                        (
-                            Pair(Box::new(Regular(aa + pair.0)), Box::new(Regular(0))),
-                            0,
-                            pair.1,
-                        )
-                    }
-                    (Pair(aa, ab), Regular(bb)) => {
-                        let pair = foo(Pair(aa, ab));
-                        (
-                            Pair(Box::new(Regular(0)), Box::new(Regular(bb + pair.1))),
-                            pair.0,
-                            0,
-                        )
-                    }
-                    (Pair(aa, ab), Pair(ba, bb)) => {
-                        let pair_a = foo(Pair(aa, ab));
-                        let pair_b = foo(Pair(ba, bb));
-                        (
-                            Pair(
-                                Box::new(Regular(0)),
-                                Box::new(Pair(
-                                    Box::new(Regular(pair_b.0 + pair_a.1)),
-                                    Box::new(Regular(pair_b.1)),
-                                )),
-                            ),
-                            0,
-                            0,
-                        )
-                    }
-                    _ => panic!(),
+            match (*a, *b) {
+                (Pair(aa, ab), pair) => {
+                    let (num, left, right) = explode(*aa, *ab);
+                    (
+                        Pair(Box::new(num), Box::new(add_left(pair, right))),
+                        left,
+                        0,
+                    )
                 }
-            } else {
-                //println!("reduce {:?} depth: {:?}", &number, depth);
-                let left = reduce(*a, depth + 1);
-                let right = reduce(*b, depth + 1);
-                (
-                    Pair(
-                        Box::new(add_right(left.0, right.1)),
-                        Box::new(add_left(right.0, left.2)),
-                    ),
-                    0,
-                    0,
-                )
+                (regular, Pair(ba, bb)) => {
+                    let (num, left, right) = explode(*ba, *bb);
+                    (
+                        Pair(Box::new(add_right(regular, left)), Box::new(num)),
+                        0,
+                        right,
+                    )
+                }
+                _ => panic!(),
             }
+
+            // if depth == 4 {
+            //     println!("reduce {:?} depth: {:?}", &number, depth);
+            //     let (num, left, right) = explode(*a);
+            //     (Pair(Box::new(num), Box::new(add_left(*b, right))), left, 0)
+            // } else {
+            //     //
+            //     let left = reduce(*a, depth + 1);
+            //     let right = reduce(*b, depth + 1);
+            //     (
+            //         Pair(
+            //             Box::new(add_right(left.0, right.1)),
+            //             Box::new(add_left(right.0, left.2)),
+            //         ),
+            //         0,
+            //         0,
+            //     )
+            // }
         }
     }
 }
 
-fn explode(number: Number) -> (Number, i32, i32) {
-    match number {
-        Pair(a, b) => match (*a, *b) {
-            (Regular(aa), Regular(bb)) => (Regular(0), aa, bb),
-            _ => panic!(),
-        },
+fn explode(a: Number, b: Number) -> (Number, i32, i32) {
+    match (a, b) {
+        (Regular(aa), Regular(bb)) => (Regular(0), aa, bb),
         _ => panic!(),
     }
 }
