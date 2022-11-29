@@ -67,7 +67,7 @@ defmodule AdventOfCode.Input do
     config()
     |> Keyword.get(
       :cache_dir,
-      Path.join([System.get_env("XDG_CACHE_HOME", "~/.cache"), "/advent_of_code_inputs"])
+      Path.join(["inputs"])
     )
     |> Path.expand()
   end
