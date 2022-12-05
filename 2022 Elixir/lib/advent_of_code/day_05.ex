@@ -7,34 +7,40 @@ defmodule AdventOfCode.Day05 do
     [stacks, proc] =
       args
       |> String.split("\n\n", trim: true)
+      |> Enum.map(&String.split(&1, "\n", trim: true))
 
+    # Get the number of stacks by counting the numbers
     stack_count =
       stacks
-      |> String.split("\n", trim: true)
-      |> Enum.take(-1)
-      |> (fn [x] -> String.split(x, " ", trim: true) end).()
+      |> Enum.at(-1)
+      |> String.split(" ", trim: true)
       |> length()
 
     stacks =
       stacks
-      |> String.split("\n", trim: true)
+      # Ignore the row of numbers
       |> Enum.drop(-1)
-      |> Enum.map(fn l ->
-        Enum.chunk_every(String.graphemes(l), 4) |> Enum.map(fn x -> Enum.at(x, 1) end)
-      end)
+      # Convert to a list of letters
+      |> Enum.map(&String.graphemes(&1))
+      # Group by 4 letters (cuz [#] plus space), and take only the second one (index 1)
+      |> Enum.map(&(Enum.chunk_every(&1, 4) |> Enum.map(fn x -> Enum.at(x, 1) end)))
+      |> dbg
 
+    # Get the longest list size, to use it in the homemade "zip"
     max = (Enum.map(stacks, &length/1) |> Enum.max()) - 1
 
+    # I want a Enum.zip but that keeps going until the largest list is empty
     stacks =
-      Enum.map(0..max, fn y -> Enum.map(stacks, fn x -> Enum.at(x, y) end) end)
-      |> Enum.map(fn x -> Enum.filter(x, fn y -> y != " " && !is_nil(y) end) end)
+      Enum.map(0..max, fn y -> Enum.map(stacks, &Enum.at(&1, y)) end)
+      |> Enum.map(&Enum.filter(&1, fn y -> y != " " && !is_nil(y) end))
 
+    # adding an empty set cuz WHO TF starts counting stacks on 1???
     stacks = [[] | stacks]
 
     proc =
       proc
-      |> String.split("\n", trim: true)
       |> Stream.map(fn l ->
+        # Take only numbers from "move 1 from 2 to 1"
         [_, qt, _, from, _, to] = String.split(l, " ")
         {String.to_integer(qt), String.to_integer(from), String.to_integer(to)}
       end)
@@ -45,60 +51,41 @@ defmodule AdventOfCode.Day05 do
   def part1(args) do
     {stacks, proc, size} = parse(args)
 
-    for(
-      x <-
-        Enum.reduce(proc, stacks, fn instruction, acc -> move(acc, instruction, size) end)
-        |> Enum.drop(1),
-      do: Enum.at(x, 0)
-    )
+    Enum.reduce(proc, stacks, fn instruction, acc -> move(acc, instruction, size, :part1) end)
+    # remember the extra []? kill it
+    |> Enum.drop(1)
+    # just take the top crate
+    |> Enum.map(&Enum.at(&1, 0))
     |> to_string()
-  end
-
-  defp move(stacks, {qt, from_ix, to_ix}, size) do
-    from = Enum.at(stacks, from_ix)
-    to = Enum.at(stacks, to_ix)
-
-    {new_from, new_to} = {
-      Enum.drop(from, qt),
-      Enum.reduce(0..(qt - 1), to, fn x, acc -> [Enum.at(from, x) | acc] end)
-    }
-
-    Enum.map(0..size, fn ix ->
-      cond do
-        ix == from_ix -> new_from
-        ix == to_ix -> new_to
-        true -> Enum.at(stacks, ix)
-      end
-    end)
   end
 
   def part2(args) do
     {stacks, proc, size} = parse(args)
 
-    for(
-      x <-
-        Enum.reduce(proc, stacks, fn instruction, acc -> move2(acc, instruction, size) end)
-        |> Enum.drop(1),
-      do: Enum.at(x, 0)
-    )
+    Enum.reduce(proc, stacks, fn instruction, acc -> move(acc, instruction, size, :part2) end)
+    |> Enum.drop(1)
+    |> Enum.map(&Enum.at(&1, 0))
     |> to_string()
   end
 
-  defp move2(stacks, {qt, from_ix, to_ix}, size) do
+  defp move(stacks, {qt, from_ix, to_ix}, size, part) do
     from = Enum.at(stacks, from_ix)
     to = Enum.at(stacks, to_ix)
 
     {new_from, new_to} = {
       Enum.drop(from, qt),
-      Enum.take(from, qt) ++ to
+      case part do
+        # move crates one by one
+        :part1 -> Enum.reduce(0..(qt - 1), to, &[Enum.at(from, &1) | &2])
+        # just take them!
+        _ -> Enum.take(from, qt) ++ to
+      end
     }
 
-    Enum.map(0..size, fn ix ->
-      cond do
-        ix == from_ix -> new_from
-        ix == to_ix -> new_to
-        true -> Enum.at(stacks, ix)
-      end
+    Enum.map(0..size, fn
+      ^from_ix -> new_from
+      ^to_ix -> new_to
+      ix -> Enum.at(stacks, ix)
     end)
   end
 end
