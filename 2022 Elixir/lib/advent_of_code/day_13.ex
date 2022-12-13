@@ -25,6 +25,20 @@ end
 
 defmodule AdventOfCode.Day13 do
   def part1(args) do
+    dbg(
+      Packet.compare(
+        %Packet{
+          data: [
+            [7],
+            [5, [[3, 8, 9], [1], 5], [[7, 4], 6, [], 0], [1, 8, [1, 5, 9]]],
+            [],
+            [[[8, 1, 8, 8, 8], 5, 0, 6], 5, 5, 4]
+          ]
+        },
+        %Packet{data: [[7, [[4, 6, 4, 2], [0]], []]]}
+      )
+    )
+
     args
     |> String.split("\n\n", trim: true)
     |> Enum.map(fn l ->
