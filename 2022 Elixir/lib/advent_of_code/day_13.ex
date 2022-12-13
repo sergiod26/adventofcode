@@ -1,3 +1,28 @@
+defmodule Packet do
+  defstruct [:data]
+
+  def compare(%Packet{data: d1}, %Packet{data: d2}), do: do_compare(d1, d2)
+
+  defp do_compare(num1, num2) when is_integer(num1) and is_integer(num2) do
+    cond do
+      num1 == num2 -> :eq
+      num1 < num2 -> :lt
+      true -> :gt
+    end
+  end
+
+  defp do_compare([], []), do: :eq
+  defp do_compare([], list) when is_list(list), do: :lt
+  defp do_compare(list, []) when is_list(list), do: :gt
+  defp do_compare(num, list) when is_integer(num) and is_list(list), do: do_compare([num], list)
+  defp do_compare(list, num) when is_integer(num) and is_list(list), do: do_compare(list, [num])
+
+  defp do_compare([h1 | t1], [h2 | t2]) do
+    res = do_compare(h1, h2)
+    if res != :eq, do: res, else: do_compare(t1, t2)
+  end
+end
+
 defmodule AdventOfCode.Day13 do
   def part1(args) do
     args
@@ -6,10 +31,10 @@ defmodule AdventOfCode.Day13 do
       String.split(l, "\n", trim: true)
       |> Enum.map(fn x ->
         {r, _} = Code.eval_string(x)
-        r
+        %Packet{data: r}
       end)
     end)
-    |> Enum.map(fn [v1, v2] -> compare(v1, v2) end)
+    |> Enum.map(fn [v1, v2] -> Packet.compare(v1, v2) end)
     |> Enum.with_index()
     |> Enum.filter(fn {r, _} -> r == :lt end)
     |> Enum.map(fn {_, ix} -> ix + 1 end)
@@ -22,49 +47,13 @@ defmodule AdventOfCode.Day13 do
       |> String.split("\n", trim: true)
       |> Enum.map(fn x ->
         {r, _} = Code.eval_string(x)
-        r
+        %Packet{data: r}
       end)
-      |> Enum.concat([[[2]], [[6]]])
-      |> bubblesort
+      |> Enum.concat([%Packet{data: [[2]]}, %Packet{data: [[6]]}])
+      |> Enum.sort(Packet)
       |> Enum.with_index()
-      |> Enum.filter(fn {val, _} -> val == [[2]] || val == [[6]] end)
+      |> Enum.filter(fn {%Packet{data: val}, _} -> val == [[2]] || val == [[6]] end)
 
     (ix1 + 1) * (ix2 + 1)
   end
-
-  defp compare(num1, num2) when is_integer(num1) and is_integer(num2) do
-    cond do
-      num1 == num2 -> :eq
-      num1 < num2 -> :lt
-      true -> :gt
-    end
-  end
-
-  defp compare([], []), do: :eq
-  defp compare([], list) when is_list(list), do: :lt
-  defp compare(list, []) when is_list(list), do: :gt
-  defp compare(num, list) when is_integer(num) and is_list(list), do: compare([num], list)
-  defp compare(list, num) when is_integer(num) and is_list(list), do: compare(list, [num])
-
-  defp compare([h1 | t1], [h2 | t2]) do
-    res = compare(h1, h2)
-    if res != :eq, do: res, else: compare(t1, t2)
-  end
-
-  # In C# you can do a custom comparer that returns -1, 0, or 1... was googling something similar but
-  # didn't find it quickly enough... so instead behold bubblesort!
-  defp bubblesort(list) do
-    it = iterate(list)
-    if it == list, do: it, else: bubblesort(it)
-  end
-
-  defp iterate([x, y | t]) do
-    if compare(x, y) == :lt do
-      [x | iterate([y | t])]
-    else
-      [y | iterate([x | t])]
-    end
-  end
-
-  defp iterate(list), do: list
 end
