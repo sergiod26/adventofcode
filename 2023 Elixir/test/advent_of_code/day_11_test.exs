@@ -3,8 +3,7 @@ defmodule AdventOfCode.Day11Test do
 
   import AdventOfCode.Day11
 
-  test "part1" do
-    input = "...#......
+  @input "...#......
 .......#..
 #.........
 ..........
@@ -14,16 +13,19 @@ defmodule AdventOfCode.Day11Test do
 ..........
 .......#..
 #...#....."
-    result = part1(input)
 
+  test "part1" do
+    result = part1(@input)
     assert result == 374
   end
 
-  @tag :skip
-  test "part2" do
-    input = nil
-    result = part2(input)
+  test "part2.1" do
+    result = part2(@input, 10)
+    assert result == 1030
+  end
 
-    assert result
+  test "part2.2" do
+    result = part2(@input, 100)
+    assert result == 8410
   end
 end
