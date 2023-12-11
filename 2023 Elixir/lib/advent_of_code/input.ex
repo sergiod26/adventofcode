@@ -80,11 +80,16 @@ defmodule AdventOfCode.Input do
   end
 
   defp config, do: Application.get_env(:advent_of_code, __MODULE__)
-  defp allow_network?, do: Keyword.get(config(), :allow_network?, false)
+  defp allow_network?, do: Keyword.get(config(), :allow_network?, true)
 
   defp headers,
     do: [
-      {'user-agent', 'github.com/mhanberg/advent-of-code-elixir-starter by aoc@mitchellhanberg.com'},
-      {'cookie', String.to_charlist("session=" <> Keyword.get(config(), :session_cookie))}
+      {'user-agent',
+       'github.com/mhanberg/advent-of-code-elixir-starter by aoc@mitchellhanberg.com'},
+      {'cookie',
+       String.to_charlist(
+         "session=" <>
+           (System.get_env("session_cookie") || Keyword.get(config(), :session_cookie))
+       )}
     ]
 end
