@@ -15,11 +15,16 @@ defmodule AdventOfCode.Day12Test do
     assert result == 21
   end
 
-  @tag :skip
+  @tag timeout: :infinity
   test "part2" do
-    input = nil
+    input = "???.### 1,1,3
+.??..??...?##. 1,1,3
+?#?#?#?#?#?#?#? 1,3,1,6
+????.#...#... 4,1,1
+????.######..#####. 1,6,5
+?###???????? 3,2,1"
     result = part2(input)
 
-    assert result
+    assert result == 525_152
   end
 end
