@@ -15,7 +15,6 @@ defmodule AdventOfCode.Day12Test do
     assert result == 21
   end
 
-  @tag timeout: :infinity
   test "part2" do
     input = "???.### 1,1,3
 .??..??...?##. 1,1,3
