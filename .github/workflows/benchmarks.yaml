@@ -10,21 +10,21 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./2023 Elixir
+        working-directory: ./2024 Elixir
 
     steps:
       - uses: actions/checkout@v3
 
       - uses: erlef/setup-beam@v1
         with:
-          version-file: ./2023 Elixir/.tool-versions
+          version-file: ./2024 Elixir/.tool-versions
           version-type: strict
 
       - name: Setup
         run: mix do deps.get, compile
 
       - name: Benchmark Part 1
-        run: mix d25.p1
+        run: mix d03.p1
 
       - name: Benchmark Part 2
-        run: mix d25.p2 -b
+        run: mix d03.p2 -b
